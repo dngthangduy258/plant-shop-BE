@@ -19,6 +19,8 @@ import { debtsRoute } from './routes/debts';
 import { reportsRoute } from './routes/reports';
 import { categoriesRoute } from './routes/categories';
 import { storeRoute } from './routes/store';
+import { authRoute } from './routes/auth';
+import { seedRoute } from './routes/seed';
 
 // Create Hono app
 const app = new Hono<{ Bindings: Env }>();
@@ -50,6 +52,8 @@ app.route('/api/invoices', invoicesRoute);
 app.route('/api/debts', debtsRoute);
 app.route('/api/reports', reportsRoute);
 app.route('/api/store', storeRoute);
+app.route('/api/auth', authRoute);
+app.route('/api/seed', seedRoute);
 
 // Root route
 app.get('/', (c) => {
