@@ -27,9 +27,9 @@ const app = new Hono<{ Bindings: Env }>();
 
 // Middleware
 app.use('*', cors({
-  origin: '*', // Update this to your domain in production
+  origin: ['https://plant-shop-frontend.pages.dev', 'http://localhost:5173'],
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization'],
+  allowHeaders: ['Content-Type', 'Authorization', 'X-Session-ID'],
   credentials: true
 }));
 app.use('*', logger());
