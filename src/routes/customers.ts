@@ -85,6 +85,17 @@ customersRoute.post('/', async (c) => {
     return errorResponse('Name is required', 400);
   }
   
+  // Check for duplicate phone number
+  if (body.phone) {
+    const { results: existing } = await c.env.DB.prepare(
+      'SELECT id FROM customers WHERE phone = ? AND is_active = 1'
+    ).bind(body.phone).all();
+    
+    if (existing.length > 0) {
+      return errorResponse('Số điện thoại đã được sử dụng bởi khách hàng khác', 400);
+    }
+  }
+  
   const id = body.id || generateId('cust');
   const code = body.code || `KH${Date.now()}`;
   
@@ -115,6 +126,17 @@ customersRoute.post('/', async (c) => {
 customersRoute.put('/:id', async (c) => {
   const { id } = c.req.param();
   const body = await c.req.json();
+  
+  // Check for duplicate phone number (excluding current customer)
+  if (body.phone) {
+    const { results: existing } = await c.env.DB.prepare(
+      'SELECT id FROM customers WHERE phone = ? AND id != ? AND is_active = 1'
+    ).bind(body.phone, id).all();
+    
+    if (existing.length > 0) {
+      return errorResponse('Số điện thoại đã được sử dụng bởi khách hàng khác', 400);
+    }
+  }
   
   try {
     await c.env.DB.prepare(`

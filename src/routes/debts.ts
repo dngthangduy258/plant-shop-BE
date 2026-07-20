@@ -128,3 +128,40 @@ debtsRoute.get('/:id/payments', async (c) => {
     return errorResponse('Failed to fetch payments');
   }
 });
+
+// Get debts by customer
+debtsRoute.get('/customer/:customerId', async (c) => {
+  const { customerId } = c.req.param();
+  const { status } = c.req.query();
+  
+  let query = `
+    SELECT d.*, i.invoice_number, i.invoice_date
+    FROM debts d
+    LEFT JOIN invoices i ON d.invoice_id = i.id
+    WHERE d.customer_id = ?
+  `;
+  
+  const bindings: any[] = [customerId];
+  
+  if (status) {
+    query += ' AND d.status = ?';
+    bindings.push(status);
+  }
+  
+  query += ' ORDER BY d.created_at DESC';
+  
+  try {
+    const stmt = c.env.DB.prepare(query);
+    const { results } = await stmt.bind(...bindings).all();
+    
+    const debts = results.map((d: any) => ({
+      ...d,
+      remaining_amount: d.amount - (d.paid_amount || 0)
+    }));
+    
+    return successResponse(debts);
+  } catch (err) {
+    console.error('Error fetching customer debts:', err);
+    return errorResponse('Failed to fetch customer debts');
+  }
+});

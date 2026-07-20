@@ -148,11 +148,18 @@ invoicesRoute.post('/', async (c) => {
         itemTotal + itemTax
       ).run();
       
-      // Update batch quantity
+      // Update batch quantity if batch_id exists
       if (item.batch_id) {
         await c.env.DB.prepare(`
           UPDATE batches SET quantity = quantity - ? WHERE id = ?
         `).bind(item.quantity, item.batch_id).run();
+      }
+      
+      // Always update product total stock
+      if (item.product_id) {
+        await c.env.DB.prepare(`
+          UPDATE products SET total_stock = total_stock - ? WHERE id = ?
+        `).bind(item.quantity, item.product_id).run();
       }
     }
     
