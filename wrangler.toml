@@ -1,0 +1,27 @@
+name = "plant-shop-api"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+# Account ID - set via wrangler secret or environment
+# account_id = "your-account-id"
+
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "plant-shop-db"
+database_id = "your-d1-database-id-here"
+
+# R2 Bucket for file uploads
+[[r2_buckets]]
+binding = "ASSETS"
+bucket_name = "plant-shop-assets"
+
+# KV Namespace for caching (optional)
+# [[kv_namespaces]]
+# binding = "CACHE"
+# id = "your-kv-namespace-id"
+
+# Environment variables
+[vars]
+APP_NAME = "Plant Shop POS"
+APP_VERSION = "1.0.0"
